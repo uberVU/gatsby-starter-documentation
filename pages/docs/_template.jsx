@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import Breakpoint from 'components/Breakpoint'
-import find from 'lodash/find'
+import _ from 'lodash'
 import { prefixLink } from 'gatsby-helpers'
 import { config } from 'config'
 
@@ -22,10 +22,13 @@ module.exports = React.createClass({
   },
 
   render () {
-    const childPages = config.docPages.map((p) => {
-      const page = find(this.props.route.pages, (_p) => _p.path === p)
+    const filteredPages = _.filter(this.props.route.pages, (page) => {
+      return page.path.indexOf('docs') !== -1;
+    });
+
+    const childPages = filteredPages.map((page) => {
       return {
-        title: page.data.title,
+        title: _.startCase(page.data.title),
         path: page.path,
       }
     })
@@ -69,8 +72,10 @@ module.exports = React.createClass({
               paddingRight: `calc(${rhythm(1/2)} - 1px)`,
               position: 'absolute',
               width: `calc(${rhythm(8)} - 1px)`,
+              maxHeight: `80vh`,
               borderRight: '1px solid lightgrey',
             }}
+            className="sidebar"
           >
             <ul
               style={{
@@ -85,7 +90,7 @@ module.exports = React.createClass({
           <div
             style={{
               padding: `0 ${rhythm(1)}`,
-              paddingLeft: `calc(${rhythm(8)} + ${rhythm(1)})`,
+              paddingLeft: `calc(${rhythm(8)} + ${rhythm(1)})`
             }}
           >
             {this.props.children}
